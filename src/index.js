@@ -183,6 +183,7 @@ module.exports = function parse(feedXML, callback) {
     // sort by date descending
     if (result.episodes) {
       result.episodes = result.episodes.sort((item1, item2) => {
+        if (!item1 || !item1.published || !item2 || !item2.published) return 0;
         return item2.published.getTime() - item1.published.getTime();
       });
     }
