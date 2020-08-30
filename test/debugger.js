@@ -6,8 +6,8 @@ const run = () => {
   try {
     const testContent = fs.readFileSync(path.join(__dirname, './fixtures/landofgiants.xml')).toString();
     const hideEpisodes = false;
-    const hideDescription = true;
-    const hideCategories = true;
+    const hideDescription = false;
+    const hideCategories = false;
 
     parse(testContent, (err, data) => {
       if (hideEpisodes) {
@@ -19,7 +19,9 @@ const run = () => {
       if (hideCategories) {
         delete data.categories;
       }
-      console.info(data)
+      //not a problem if the console prints [Array] or [Object].
+      //to see it's content just use JSON.stringify
+      // console.info(data)
     })
 
   } catch (error) {
