@@ -114,6 +114,21 @@ module.exports = function parse(feedXML, callback) {
         'itunes:season': 'season',
         'itunes:episode': 'episode',
         'itunes:episodeType': 'episodeType',
+        'content:encoded': (item) => {
+          try {
+            let hrefs = item.match(/href="([^"]*)"/gm);
+            if (hrefs) {
+              const links = hrefs.map(
+                (link) => link.replace(/href="(.*)"/, '$1').toString()
+              )
+              return {
+                links: links
+              }
+            }
+          } catch (error) {
+            console.info(error)
+          }
+        }
       };
     } else if (tmpEpisode) {
       // Episode specific attributes
