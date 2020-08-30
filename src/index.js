@@ -10,7 +10,8 @@ module.exports = function parse(feedXML, callback) {
   // -----------------------------------------------------
 
   const result = {
-    categories: []
+    categories: [],
+    links: []
   };
   var node = null;
 
@@ -32,7 +33,11 @@ module.exports = function parse(feedXML, callback) {
       node.target = result;
       node.textMap = {
         'title': true,
-        'link': true,
+        'link': (link) => {
+          if (link.startsWith('https://')) {
+            result.links.push(link)
+          }
+        },
         'language': text => {
           var lang = text;
           if (!/\w\w-\w\w/i.test(text)) {
