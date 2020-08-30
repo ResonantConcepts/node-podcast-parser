@@ -8,7 +8,8 @@
     "prepublish": "npm run build && npm run test",
     "test": "mocha",
     "cover": "istanbul cover _mocha",
-    "coveralls": "npm run cover -- --report lcovonly && cat ./coverage/lcov.info | coveralls"
+    "coveralls": "npm run cover -- --report lcovonly && cat ./coverage/lcov.info | coveralls",
+    "stest": "node ./test/debugger.js"
   },
   "keywords": [
     "podcast",
