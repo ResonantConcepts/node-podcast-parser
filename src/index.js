@@ -10,7 +10,8 @@ module.exports = function parse(feedXML, callback) {
   // -----------------------------------------------------
 
   const result = {
-    categories: []
+    categories: [],
+    links: []
   };
   var node = null;
 
@@ -32,7 +33,11 @@ module.exports = function parse(feedXML, callback) {
       node.target = result;
       node.textMap = {
         'title': true,
-        'link': true,
+        'link': (link) => {
+          if (link.startsWith('https://')) {
+            result.links.push(link)
+          }
+        },
         'language': text => {
           var lang = text;
           if (!/\w\w-\w\w/i.test(text)) {
@@ -105,9 +110,25 @@ module.exports = function parse(feedXML, callback) {
           };
         },
         'itunes:explicit': isExplicit,
+        'itunes:title': 'title',
         'itunes:season': 'season',
         'itunes:episode': 'episode',
         'itunes:episodeType': 'episodeType',
+        'content:encoded': (item) => {
+          try {
+            let hrefs = item.match(/href="([^"]*)"/gm);
+            if (hrefs) {
+              const links = hrefs.map(
+                (link) => link.replace(/href="(.*)"/, '$1').toString()
+              )
+              return {
+                links: links
+              }
+            }
+          } catch (error) {
+            console.info(error)
+          }
+        }
       };
     } else if (tmpEpisode) {
       // Episode specific attributes
