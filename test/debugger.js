@@ -1,10 +1,10 @@
-const path   = require('path');
-const fs     = require('fs');
-const parse  = require('./../src/index');
+const path = require('path');
+const fs = require('fs');
+const parse = require('./../src/index');
 
 const run = () => {
   try {
-    const testContent = fs.readFileSync(path.join(__dirname, './fixtures/landofgiants.xml')).toString();
+    const testContent = fs.readFileSync(path.join(__dirname, './fixtures/atp.xml')).toString();
     const hideEpisodes = false;
     const hideDescription = false;
     const hideCategories = false;
@@ -22,6 +22,9 @@ const run = () => {
       //not a problem if the console prints [Array] or [Object].
       //to see it's content just use JSON.stringify
       // console.info(data)
+
+      //check only links of each episode
+      //console.info(data.episodes.map((item) => item.links))
     })
 
   } catch (error) {
