@@ -3,6 +3,21 @@
 var _ = require('lodash');
 var sax = require('sax');
 
+var parseHtmlLinks = function parseHtmlLinks(hmtlText) {
+  try {
+    var hrefs = hmtlText.match(/href="([^"]*)"/gm);
+    if (hrefs) {
+      return hrefs.map(function (link) {
+        return link.replace(/href="(.*)"/, '$1').toString();
+      });
+    } else {
+      return [];
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 module.exports = function parse(feedXML, callback) {
   var parser = sax.parser({
     strict: true,
@@ -12,7 +27,8 @@ module.exports = function parse(feedXML, callback) {
   // -----------------------------------------------------
 
   var result = {
-    categories: []
+    categories: [],
+    links: []
   };
   var node = null;
 
@@ -34,7 +50,14 @@ module.exports = function parse(feedXML, callback) {
       node.target = result;
       node.textMap = {
         'title': true,
-        'link': true,
+        'link': function link(_link) {
+          try {
+            var url = new URL(_link);
+            result.links.push(url.href);
+          } catch (e) {
+            // that happened
+          }
+        },
         'language': function language(text) {
           var lang = text;
           if (!/\w\w-\w\w/i.test(text)) {
@@ -110,9 +133,20 @@ module.exports = function parse(feedXML, callback) {
           };
         },
         'itunes:explicit': isExplicit,
+        'itunes:title': function itunesTitle(text) {
+          return !!text ? {
+            title: text
+          } : undefined;
+        },
         'itunes:season': 'season',
         'itunes:episode': 'episode',
-        'itunes:episodeType': 'episodeType'
+        'itunes:episodeType': 'episodeType',
+        'content:encoded': function contentEncoded(item) {
+
+          return {
+            links: parseHtmlLinks(item)
+          };
+        }
       };
     } else if (tmpEpisode) {
       // Episode specific attributes
@@ -142,6 +176,12 @@ module.exports = function parse(feedXML, callback) {
         description = tmpEpisode.description.primary || tmpEpisode.description.alternate || '';
       }
       tmpEpisode.description = description;
+
+      //check for links on description when no links on encoded:content
+      if (tmpEpisode.links === undefined) {
+        tmpEpisode.links = parseHtmlLinks(description);
+      }
+
       result.episodes.push(tmpEpisode);
       tmpEpisode = null;
     }
