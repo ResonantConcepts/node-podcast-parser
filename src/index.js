@@ -50,8 +50,11 @@ module.exports = function parse(feedXML, callback) {
       node.textMap = {
         'title': true,
         'link': (link) => {
-          if (link.startsWith('https://')) {
-            result.links.push(link)
+          try {
+            var url = new URL(link)
+            result.links.push(url.href)
+          } catch (e) {
+            // that happened
           }
         },
         'language': text => {
