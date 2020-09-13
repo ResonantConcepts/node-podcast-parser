@@ -126,7 +126,9 @@ module.exports = function parse(feedXML, callback) {
           };
         },
         'itunes:explicit': isExplicit,
-        'itunes:title': 'title',
+        'itunes:title': text => (!!text ? {
+          title: text
+        } : undefined),
         'itunes:season': 'season',
         'itunes:episode': 'episode',
         'itunes:episodeType': 'episodeType',
