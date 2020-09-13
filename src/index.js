@@ -1,6 +1,22 @@
 const _ = require('lodash');
 const sax = require('sax');
 
+const parseHtmlLinks = (hmtlText)  => {
+  try {
+    let hrefs = hmtlText.match(/href="([^"]*)"/gm);
+    if (hrefs) {
+      return hrefs.map(
+        (link) => link.replace(/href="(.*)"/, '$1').toString()
+      )
+    } else {
+      return []
+    }
+  } catch (error) {
+    console.error(error)
+  }
+
+}
+
 module.exports = function parse(feedXML, callback) {
   const parser = sax.parser({
     strict: true,
@@ -115,19 +131,11 @@ module.exports = function parse(feedXML, callback) {
         'itunes:episode': 'episode',
         'itunes:episodeType': 'episodeType',
         'content:encoded': (item) => {
-          try {
-            let hrefs = item.match(/href="([^"]*)"/gm);
-            if (hrefs) {
-              const links = hrefs.map(
-                (link) => link.replace(/href="(.*)"/, '$1').toString()
-              )
-              return {
-                links: links
-              }
-            }
-          } catch (error) {
-            console.info(error)
+
+          return {
+            links: parseHtmlLinks(item)
           }
+          
         }
       };
     } else if (tmpEpisode) {
@@ -158,6 +166,12 @@ module.exports = function parse(feedXML, callback) {
         description = tmpEpisode.description.primary || tmpEpisode.description.alternate || '';
       }
       tmpEpisode.description = description;
+
+      //check for links on description when no links on encoded:content
+      if (tmpEpisode.links === undefined) {
+        tmpEpisode.links = parseHtmlLinks(description)
+      }
+
       result.episodes.push(tmpEpisode);
       tmpEpisode = null;
     }
@@ -208,6 +222,7 @@ module.exports = function parse(feedXML, callback) {
         return item2.published.getTime() - item1.published.getTime();
       });
     }
+
 
     if (!result.updated) {
       if (result.episodes && result.episodes.length > 0) {
