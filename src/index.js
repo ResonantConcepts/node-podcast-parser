@@ -136,7 +136,7 @@ module.exports = function parse(feedXML, callback) {
             links: parseHtmlLinks(item)
           }
           
-        }
+        },
       };
     } else if (tmpEpisode) {
       // Episode specific attributes
@@ -149,6 +149,12 @@ module.exports = function parse(feedXML, callback) {
           type: node.attributes.type,
           url: node.attributes.url
         };
+      } else if (node.name === 'podcast:transcript') {
+        if (tmpEpisode.transcriptions) {
+          tmpEpisode.transcriptions.push(node.attributes)
+        } else {
+          tmpEpisode.transcriptions = [node.attributes]
+        }
       }
     }
   };
