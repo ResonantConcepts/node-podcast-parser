@@ -117,7 +117,11 @@ module.exports = function parse(feedXML, callback) {
       tmpEpisode = {};
       node.target = tmpEpisode;
       node.textMap = {
-        'title': true,
+        'title': text => {
+          return {
+            title: text
+          }
+        },
         'guid': true,
         'itunes:summary': 'description.primary',
         'description': 'description.alternate',
@@ -143,18 +147,20 @@ module.exports = function parse(feedXML, callback) {
           };
         },
         'itunes:explicit': isExplicit,
-        'itunes:title': text => (!!text ? {
-          title: text
-        } : undefined),
+        'itunes:title': text => {
+          if (text) {
+            return {
+              title: text
+            }
+          }
+        },
         'itunes:season': 'season',
         'itunes:episode': 'episode',
         'itunes:episodeType': 'episodeType',
         'content:encoded': (item) => {
-
           return {
             links: parseHtmlLinks(item)
           }
-
         }
       };
     } else if (tmpEpisode) {

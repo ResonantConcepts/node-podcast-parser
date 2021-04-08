@@ -69,16 +69,22 @@ module.exports = function parse(feedXML, callback) {
               lang = lang + '-' + lang;
             }
           }
-          return { language: lang.toLowerCase() };
+          return {
+            language: lang.toLowerCase()
+          };
         },
         'itunes:author': 'author',
         'itunes:subtitle': 'description.short',
         'description': 'description.long',
         'ttl': function ttl(text) {
-          return { ttl: parseInt(text) };
+          return {
+            ttl: parseInt(text)
+          };
         },
         'pubDate': function pubDate(text) {
-          return { updated: new Date(text) };
+          return {
+            updated: new Date(text)
+          };
         },
         'itunes:explicit': isExplicit,
         'itunes:type': 'type'
@@ -112,12 +118,18 @@ module.exports = function parse(feedXML, callback) {
       tmpEpisode = {};
       node.target = tmpEpisode;
       node.textMap = {
-        'title': true,
+        'title': function title(text) {
+          return {
+            title: text
+          };
+        },
         'guid': true,
         'itunes:summary': 'description.primary',
         'description': 'description.alternate',
         'pubDate': function pubDate(text) {
-          return { published: new Date(text) };
+          return {
+            published: new Date(text)
+          };
         },
         'itunes:duration': function itunesDuration(text) {
           return {
@@ -134,9 +146,11 @@ module.exports = function parse(feedXML, callback) {
         },
         'itunes:explicit': isExplicit,
         'itunes:title': function itunesTitle(text) {
-          return !!text ? {
-            title: text
-          } : undefined;
+          if (text) {
+            return {
+              title: text
+            };
+          }
         },
         'itunes:season': 'season',
         'itunes:episode': 'episode',
