@@ -156,8 +156,8 @@ module.exports = function parse(feedXML, callback) {
         'itunes:episode': 'episode',
         'itunes:episodeType': 'episodeType',
         'content:encoded': function contentEncoded(item) {
-
           return {
+            contentEncoded: item,
             links: parseHtmlLinks(item)
           };
         }
