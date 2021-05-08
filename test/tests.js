@@ -39,7 +39,7 @@ describe('Podcast feed parser', () => {
       }
 
       expect(data).to.have.property('title');
-      expect(data).to.have.property('link');
+      expect(data).to.have.property('links');
       expect(data).to.have.property('language');
       expect(data).to.have.property('description');
       expect(data.description).to.have.property('short');
@@ -53,7 +53,7 @@ describe('Podcast feed parser', () => {
       expect(data).to.have.property('episodes');
 
       expect(data.title).to.be.a('string');
-      expect(data.link).to.be.a('string');
+      expect(data.links).to.be.an(Array);
       expect(data.language).to.be.a('string');
       expect(data.description.short).to.be.a('string');
       expect(data.description.long).to.be.a('string');
