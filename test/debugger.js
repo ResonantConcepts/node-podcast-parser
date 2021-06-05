@@ -21,7 +21,7 @@ const run = () => {
       }
       //not a problem if the console prints [Array] or [Object].
       //to see it's content just use JSON.stringify
-      // console.info(data)
+      console.info(data.episodes)
 
       //check only links of each episode
       //console.info(data.episodes.map((item) => item.links))

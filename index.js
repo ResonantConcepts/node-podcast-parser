@@ -179,6 +179,12 @@ module.exports = function parse(feedXML, callback) {
         } else {
           tmpEpisode.transcriptions = [node.attributes];
         }
+      } else if (node.name === 'podcast:chapters') {
+        if (tmpEpisode.chapters) {
+          tmpEpisode.chapters.push(node.attributes);
+        } else {
+          tmpEpisode.chapters = [node.attributes];
+        }
       }
     }
   };
