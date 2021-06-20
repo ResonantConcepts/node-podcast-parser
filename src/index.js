@@ -124,10 +124,20 @@ module.exports = function parse(feedXML, callback) {
         },
         'guid': true,
         'itunes:summary': 'description.primary',
-        'description': [
-          'description.alternate',
-          'rawDescription',
-        ],
+        // 'description': 'description.alternate',
+        'description': text => {
+          return {
+            description: {
+              alternate: text,
+            },
+            rawDescription: text,
+          }
+
+        },
+        // 'description': [
+        //   'description.alternate',
+        //   'rawDescription',
+        // ],
         'pubDate': text => {
           return {
             published: new Date(text)
