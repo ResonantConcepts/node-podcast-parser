@@ -124,7 +124,10 @@ module.exports = function parse(feedXML, callback) {
         },
         'guid': true,
         'itunes:summary': 'description.primary',
-        'description': 'description.alternate',
+        'description': [
+          'description.alternate',
+          'rawDescription',
+        ],
         'pubDate': text => {
           return {
             published: new Date(text)
@@ -187,7 +190,6 @@ module.exports = function parse(feedXML, callback) {
         } else {
           tmpEpisode.chapters = [node.attributes];
         }
-
       }
     }
   };
