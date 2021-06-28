@@ -4,7 +4,7 @@ const parse = require('./../src/index');
 
 const run = () => {
   try {
-    const testContent = fs.readFileSync(path.join(__dirname, './fixtures/sounds-profitable.xml')).toString();
+    const testContent = fs.readFileSync(path.join(__dirname, './fixtures/blatering.xml')).toString();
     const hideEpisodes = false;
     const hideDescription = false;
     const hideCategories = false;

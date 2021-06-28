@@ -125,7 +125,6 @@ module.exports = function parse(feedXML, callback) {
         },
         'guid': true,
         'itunes:summary': 'description.primary',
-        // 'description': 'description.alternate',
         'description': function description(text) {
           return {
             description: {
@@ -134,10 +133,6 @@ module.exports = function parse(feedXML, callback) {
             rawDescription: text
           };
         },
-        // 'description': [
-        //   'description.alternate',
-        //   'rawDescription',
-        // ],
         'pubDate': function pubDate(text) {
           return {
             published: new Date(text)
@@ -192,10 +187,34 @@ module.exports = function parse(feedXML, callback) {
           tmpEpisode.transcriptions = [node.attributes];
         }
       } else if (node.name === 'podcast:chapters') {
+        if (tmpEpisode.chaptersTag === 'psc:chapters') {
+          delete tmpEpisode.chapters;
+        }
         if (tmpEpisode.chapters) {
           tmpEpisode.chapters.push(node.attributes);
         } else {
           tmpEpisode.chapters = [node.attributes];
+          tmpEpisode.chaptersTag = 'podcast:chapters';
+        }
+      } else if (node.parent.name === 'psc:chapters') {
+        // console.info(node.attributes)
+        if (tmpEpisode.chaptersTag === 'podcast:chapters') {
+          return;
+        }
+
+        var chapter = {
+          startTime: node.attributes.start,
+          title: node.attributes.title
+        };
+        if (node.attributes.href) {
+          chapter.url = node.attributes.href;
+        }
+
+        if (tmpEpisode.chapters) {
+          tmpEpisode.chapters.push(chapter);
+        } else {
+          tmpEpisode.chapters = [chapter];
+          tmpEpisode.chaptersTag = 'psc:chapters';
         }
       }
     }
